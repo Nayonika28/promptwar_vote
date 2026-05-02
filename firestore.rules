@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Users collection
+    match /users/{uid} {
+      allow get: if isOwner(uid);
+      allow create: if isOwner(uid) && 
+        request.resource.data.keys().hasAll(['uid', 'email', 'createdAt']) &&
+        request.resource.data.uid == request.auth.uid;
+      allow update: if isOwner(uid) && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL']);
+    }
+
+    // User Progress
+    match /userProgress/{userId} {
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId);
+    }
+
+    // Interactions (write only for users, maybe read for self log)
+    match /interactions/{interactionId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow list, get: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "VoterWise",
+  "description": "An interactive election assistant helping users understand the voting process, timelines, and requirements through AI, voice, and multilingual support.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["AI Assistant", "Voice Interaction", "Multilingual Support", "Voter Education"]
+}

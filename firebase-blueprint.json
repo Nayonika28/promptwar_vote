@@ -1,0 +1,57 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Information about the registered user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "UserProgress": {
+      "title": "User Progress",
+      "description": "Tracks the user's progress through election modules and quizzes.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "completedSteps": { "type": "array", "items": { "type": "string" } },
+        "quizScores": { "type": "object" },
+        "lastAccessed": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId"]
+    },
+    "Interaction": {
+      "title": "Interaction",
+      "description": "Log of AI interactions for audit and analytics.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "prompt": { "type": "string" },
+        "response": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "locale": { "type": "string" },
+        "audioUsed": { "type": "boolean" }
+      },
+      "required": ["userId", "prompt", "response", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{uid}": {
+      "schema": "User",
+      "description": "User profile document."
+    },
+    "userProgress/{userId}": {
+      "schema": "UserProgress",
+      "description": "User progress data."
+    },
+    "interactions/{interactionId}": {
+      "schema": "Interaction",
+      "description": "Logs of user-AI interactions."
+    }
+  }
+}
